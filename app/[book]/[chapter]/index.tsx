@@ -8,9 +8,9 @@ import * as FileSystem from "expo-file-system";
 import { XMLParser } from "fast-xml-parser";
 
 const files = {
-  Genesis: require("../../assets/hebrew-data/wlc/Gen.xml"),
-  Exodus: require("../../assets/hebrew-data/wlc/Exod.xml"),
-  Leviticus: require("../../assets/hebrew-data/wlc/Lev.xml"),
+  Genesis: require("../../../assets/hebrew-data/wlc/Gen.xml"),
+  Exodus: require("../../../assets/hebrew-data/wlc/Exod.xml"),
+  Leviticus: require("../../../assets/hebrew-data/wlc/Lev.xml"),
 };
 
 export const options = {
@@ -171,10 +171,10 @@ export interface WorkPrefix {
 }
 
 export default function SelectChapter() {
-  const { book } = useLocalSearchParams();
+  const { book, chapter } = useLocalSearchParams();
 
   const xmlContent = useQuery({
-    queryKey: ["book-uri", book],
+    queryKey: ["book-uri"],
     queryFn: async () => {
       const parser = new XMLParser({
         ignoreAttributes: false,
@@ -192,10 +192,10 @@ export default function SelectChapter() {
     },
     enabled: Boolean(book),
   });
-  const [_selectedChapter, setSelectedChapter] = useState<string | null>(null);
-  const selectedChapter =
-    _selectedChapter ??
-    xmlContent.data?.osis.osisText.div.chapter[0]["@_osisID"];
+
+  const words = xmlContent.data?.osis.osisText.div.chapter
+    .find((c) => c["@_osisID"] === chapter)
+    ?.verse.flatMap((v) => v.w);
 
   return (
     <View
@@ -204,30 +204,13 @@ export default function SelectChapter() {
         justifyContent: "center",
       }}
     >
-      <Picker
-        selectedValue={selectedChapter}
-        onValueChange={(itemValue, itemIndex) => {
-          setSelectedChapter(itemValue);
-        }}
-      >
-        {xmlContent.data?.osis.osisText.div.chapter.map((chapter) => (
-          <Picker.Item
-            key={chapter["@_osisID"]}
-            label={chapter["@_osisID"]}
-            value={chapter["@_osisID"]}
-          />
+      <ScrollView>
+        {words?.map((word) => (
+          <Text key={word["@_id"]}>
+            {word["#text"]}: {word["@_lemma"]}
+          </Text>
         ))}
-      </Picker>
-      <Button
-        title="Go to Chapter"
-        disabled={!selectedChapter || !xmlContent}
-        onPress={() => {
-          router.push({
-            pathname: "/[book]/[chapter]",
-            params: { book: book as string, chapter: selectedChapter! },
-          });
-        }}
-      />
+      </ScrollView>
     </View>
   );
 }

@@ -1,7 +1,7 @@
 import { Picker } from "@react-native-picker/picker";
 import { router } from "expo-router";
 import { useState } from "react";
-import { Text, View } from "react-native";
+import { Button, Text, View } from "react-native";
 
 const options = ["Genesis", "Exodus", "Leviticus"] as const;
 
@@ -20,19 +20,23 @@ export default function Index() {
       <Picker
         selectedValue={selectedBook}
         onValueChange={(itemValue, itemIndex) => {
-          if (itemValue !== selectedBook) {
-            setSelectedBook(itemValue);
-            router.push({
-              pathname: "/[book]/select-chapter",
-              params: { book: itemValue },
-            });
-          }
+          setSelectedBook(itemValue);
         }}
       >
         {options.map((option) => (
           <Picker.Item key={option} label={option} value={option} />
         ))}
       </Picker>
+      <Button
+        disabled={!selectedBook}
+        title="Go to Book"
+        onPress={() => {
+          router.push({
+            pathname: "/[book]/select-chapter",
+            params: { book: selectedBook },
+          });
+        }}
+      />
     </View>
   );
 }
