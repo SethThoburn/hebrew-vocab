@@ -31,7 +31,10 @@
       [
         "expo-asset",
         {
-          "assets": ["assets/hebrew-data/wlc/"]
+          "assets": [
+            "assets/hebrew-data/wlc/",
+            "assets/hebrew-data/strongs.xml"
+          ]
         }
       ]
     ],
