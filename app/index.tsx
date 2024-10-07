@@ -2,13 +2,10 @@ import { Picker } from "@react-native-picker/picker";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Button, Text, View } from "react-native";
-
-const options = ["Genesis", "Exodus", "Leviticus"] as const;
-
-type Option = (typeof options)[number];
+import { Book, books } from "../hooks/useBook";
 
 export default function Index() {
-  const [selectedBook, setSelectedBook] = useState<Option>(options[0]);
+  const [selectedBook, setSelectedBook] = useState<Book>(books[0]);
 
   return (
     <View
@@ -23,7 +20,7 @@ export default function Index() {
           setSelectedBook(itemValue);
         }}
       >
-        {options.map((option) => (
+        {books.map((option) => (
           <Picker.Item key={option} label={option} value={option} />
         ))}
       </Picker>
