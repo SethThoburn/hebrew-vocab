@@ -61,9 +61,6 @@ export const useBook = ({ book }: { book: Book }) => {
       );
       const content = await FileSystem.readAsStringAsync(localUri!);
 
-      // Log first 20 chars
-      console.log(content.slice(0, 20));
-
       return parser.parse(content) as BookXML;
     },
     enabled: Boolean(book),
